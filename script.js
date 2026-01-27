@@ -6,15 +6,15 @@ const multiply = (num1, num2) => num1 * num2;
 
 const divide = (num1, num2) => num1 / num2;
 
-function operate(operator, num1, num2) {
+function operate(num1, operator, num2) {
     switch(operator) {
-        case add:
+        case "+":
             return add(num1, num2);
-        case subtract:
+        case "-":
             return subtract(num1, num2);
-        case multiply:
+        case "*":
             return multiply(num1, num2);
-        case divide:
+        case "/":
             return divide(num1, num2);
     }
 }
@@ -101,8 +101,19 @@ zeroButton.addEventListener("click", (event) => {
 });
 
 decimalButton.addEventListener("click", (event) => {  
+    if (displayBox.textContent === "") {
+        return;
+    } else {
         displayBox.textContent += ".";
+    }
 });
+
+equalityButton.addEventListener("click", (event) => {
+    let equation = displayBox.textContent.split(" ");
+    let num1 = parseInt(equation[0]);
+    let num2 = parseInt(equation[2]);
+    displayBox.textContent = operate(num1, equation[1], num2);
+})
 
 subtractionButton.addEventListener("click", (event) => {
     displayBox.textContent += " - ";
