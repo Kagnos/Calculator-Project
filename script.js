@@ -40,42 +40,70 @@ const decimalButton = document.querySelector("#decimal-button");
 const equalityButton = document.querySelector("#equality-button");
 const subtractionButton = document.querySelector("#subtraction-button");
 
+clearButton.addEventListener("click", (event) => {
+    displayBox.textContent = "";
+})
+
+deleteButton.addEventListener("click", (event) => {
+    displayBox.textContent = displayBox.textContent.slice(0,-1);
+})
+
 sevenButton.addEventListener("click", (event) => {
-    displayBox.textContent = "7";
+    displayBox.textContent += "7";
 });
 
 eightButton.addEventListener("click", (event) => {
-    displayBox.textContent = "8";
+    displayBox.textContent += "8";
 });
 
 nineButton.addEventListener("click", (event) => {
-    displayBox.textContent = "9";
+    displayBox.textContent += "9";
 });
 
+divisionButton.addEventListener("click", (event) => {
+    displayBox.textContent += " / ";
+})
+
 fourButton.addEventListener("click", (event) => {
-    displayBox.textContent = "4";
+    displayBox.textContent += "4";
 });
 
 fiveButton.addEventListener("click", (event) => {
-    displayBox.textContent = "5";
+    displayBox.textContent += "5";
 });
 
 sixButton.addEventListener("click", (event) => {
-    displayBox.textContent = "6";
+    displayBox.textContent += "6";
 });
 
+multiplicationButton.addEventListener("click", (event) => {
+    displayBox.textContent += " * ";
+})
+
 oneButton.addEventListener("click", (event) => {
-    displayBox.textContent = "1";
+    displayBox.textContent += "1";
 });
 
 twoButton.addEventListener("click", (event) => {
-    displayBox.textContent = "2";
+    displayBox.textContent += "2";
 });
 
 threeButton.addEventListener("click", (event) => {
-    displayBox.textContent = "3";
+    displayBox.textContent += "3";
+});
+
+additionButton.addEventListener("click", (event) => {
+    displayBox.textContent += " + ";
 });
 
 zeroButton.addEventListener("click", (event) => {
-    displayBox.textContent = "0";
+    displayBox.textContent += "0";
+});
+
+decimalButton.addEventListener("click", (event) => {  
+        displayBox.textContent += ".";
+});
+
+subtractionButton.addEventListener("click", (event) => {
+    displayBox.textContent += " - ";
 });
