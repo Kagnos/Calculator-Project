@@ -4,7 +4,7 @@ const subtract = (num1, num2) => num1 - num2;
 
 const multiply = (num1, num2) => num1 * num2;
 
-const divide = (num1, num2) => num1 / num2;
+const divide = (num1, num2) => (num1 / num2);
 
 function operate(num1, operator, num2) {
     switch(operator) {
@@ -165,7 +165,17 @@ equalityButton.addEventListener("click", (event) => {
         let equation = displayBox.textContent.split(" ", 3);
         let num1 = parseInt(equation[0]);
         let num2 = parseInt(equation[2]);
-        displayBox.textContent = operate(num1, equation[1], num2);
+        let solution = operate(num1, equation[1], num2);
+        if (solution.toString().includes(".") === true){
+            const solutionArray = solution.toString().split(".")
+            if (solutionArray[1].length >= 2) {
+                displayBox.textContent = solution.toFixed(2);
+            } else {
+                displayBox.textContent = solution;
+            }
+        } else {
+            displayBox.textContent = solution;
+        }
     } else {
         return;
     }
