@@ -108,8 +108,8 @@ h1, h2, h3, h4, h5, h6 {
 
 svg {
     height: auto;
-    width: 35%;
-    margin: 10% 0 0 30%;
+    width: 40px;
+    margin: 10% 0 0 35%;
 }
 
 #error-box {
