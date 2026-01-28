@@ -24,7 +24,9 @@ function solveEquation() {
     const num1 = parseInt(equation[0]);
     const num2 = parseInt(equation[2]);
     const solution = operate(num1, equation[1], num2);
-    if (solution.toString().includes(".") === true){
+    if (solution !== solution) {
+        displayBox.textContent = "Err"
+    } else if (solution.toString().includes(".") === true){
         const solutionArray = solution.toString().split(".")
         if (solutionArray[1].length >= 2) {
             displayBox.textContent = solution.toFixed(2);
@@ -213,7 +215,7 @@ decimalButton.addEventListener("click", (event) => {
 });
 
 equalityButton.addEventListener("click", (event) => {
-    if (equation[2] !== "") {
+    if (equation[2] !== "" && equation[2] !== undefined) {
         solveEquation();
         equation = displayBox.textContent.split(" ");
     } else {
@@ -234,9 +236,9 @@ subtractionButton.addEventListener("click", (event) => {
     }
 });
 
-// if display is one number do nothing - DONE
-// if display is one number and one operator do nothing
-// if display is multiple numbers and operators are between numbers, operate the numbers
-// if display is multiple numbers and ends in operator, ignore the last operator
-
-// if there are two operators on the display then solve first equation while keeping second operator
+// fix bug: decimals not tracking
+// fix bug: can use multiple decimals in a number
+// add error message for divide by zero - DONE
+// clear error message when user inputs with a button
+// add modulus button functionality
+// add negative button functionality
