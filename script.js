@@ -21,11 +21,12 @@ const negativeButton = document.querySelector("#negative-button");
 const zeroButton = document.querySelector("#zero-button");
 const decimalButton = document.querySelector("#decimal-button");
 const equalityButton = document.querySelector("#equality-button");
+
 let equation = displayBox.textContent.split(" ");
 
 // Calculator Functions
 
-const add = (num1, num2) => num1 + num2
+const add = (num1, num2) => num1 + num2;
 
 const subtract = (num1, num2) => num1 - num2;
 
@@ -48,12 +49,12 @@ function operate(num1, operator, num2) {
         case "%":
             return remainder(num1, num2)
     }
-}
+};
 
 function solveEquation() {
     equation = displayBox.textContent.split(" ", 3);
-    const num1 = parseInt(equation[0]);
-    const num2 = parseInt(equation[2]);
+    const num1 = parseFloat(equation[0]);
+    const num2 = parseFloat(equation[2]);
     const solution = operate(num1, equation[1], num2);
     if (solution !== solution) {
         displayBox.textContent = "Err"
@@ -67,9 +68,9 @@ function solveEquation() {
     } else {
         displayBox.textContent = solution;
     }
-}
+};
 
-function updateEquationVariable() {
+function updateEquationData() {
     equation = displayBox.textContent.split(" ");
 };
 
@@ -77,19 +78,19 @@ function updateEquationVariable() {
 
 function pressClearButton() {
     displayBox.textContent = "0";
-    updateEquationVariable();
+    updateEquationData();
 };
 
 function pressDeleteButton() {
     if (equation.length === 1 && equation[0].length === 1 || equation[equation.length - 1] === "Err") {
         displayBox.textContent = "0";
-        updateEquationVariable();
+        updateEquationData();
     } else if (equation[equation.length - 1] === "") {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1).trim();
-        updateEquationVariable();
+        updateEquationData();
     } else {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1);
-        updateEquationVariable();
+        updateEquationData();
     }
 }
 
@@ -98,37 +99,37 @@ function pressNumberButton(num) {
         return;
     } else if (equation[equation.length - 1] === "Err") {
         displayBox.textContent = num;
-        updateEquationVariable();
+        updateEquationData();
     } else if (equation[equation.length - 1] === "0") {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1);
         displayBox.textContent += num;
-        updateEquationVariable();
+        updateEquationData();
     } else {
         displayBox.textContent += num;
-        updateEquationVariable();
+        updateEquationData();
     }
 };
 
 function pressOperatorButton(operator) {
-    if (displayBox.textContent.length >= 15 || displayBox.textContent === "" || displayBox.textContent.slice(-1) === " " || equation[equation.length - 1] === "Err") {
+    if (displayBox.textContent.length >= 15 || displayBox.textContent.slice(-1) === " " || equation[equation.length - 1] === "Err") {
         return;
     } else if (equation.length === 3) {
         solveEquation();
         displayBox.textContent += operator;
-        updateEquationVariable();
+        updateEquationData();
     } else {
         displayBox.textContent += operator;
-        updateEquationVariable();
+        updateEquationData();
     }
 };
 
 function pressNegativeButton() {
-    if (displayBox.textContent.length >= 15 || equation[equation.length - 1] === "" || equation[equation.length - 1] === "Err" || parseInt(equation[equation.length - 1]) === 0) {
+    if (displayBox.textContent.length >= 15 || equation[equation.length - 1] === "" || equation[equation.length - 1] === "Err" || parseFloat(equation[equation.length - 1]) === 0) {
         return;
     } else {
-        equation[equation.length - 1] = String(equation[equation.length - 1] * -1) 
-        displayBox.textContent = equation;
-        updateEquationVariable();
+        equation[equation.length - 1] = String(equation[equation.length - 1] * -1);
+        displayBox.textContent = equation.join(" ");
+        updateEquationData();
     }
 };
 
@@ -137,32 +138,32 @@ function pressZeroButton() {
         return;
     } else if (equation[equation.length - 1] === "Err") {
         displayBox.textContent = "0";
-        updateEquationVariable();
+        updateEquationData();
     } else {
         displayBox.textContent += "0";
-        updateEquationVariable();
+        updateEquationData();
     }
 }
 
 function pressDecimalButton() {
-        if (displayBox.textContent.length >= 15 || displayBox.textContent === "" || equation[equation.length - 1].includes(".") === true) {
+        if (displayBox.textContent.length >= 15 || equation[equation.length - 1].includes(".") === true) {
         return;
     } else if (equation[equation.length - 1] === "Err") {
         displayBox.textContent = "0.";
-        updateEquationVariable();
+        updateEquationData();
     } else if (displayBox.textContent.slice(-1) === " ") {
         displayBox.textContent += "0.";
-        updateEquationVariable();
+        updateEquationData();
     } else {
         displayBox.textContent += ".";
-        updateEquationVariable();
+        updateEquationData();
     }
 };
 
 function pressEqualityButton() {
     if (equation[2] !== "" && equation[2] !== undefined) {
         solveEquation();
-        updateEquationVariable();
+        updateEquationData();
     } else {
         return;
     }
@@ -227,6 +228,7 @@ twoButton.addEventListener("click", (event) => {
 });
 
 threeButton.addEventListener("click", (event) => {
+    lastButton = "3";
     pressNumberButton("3");
 });
 
@@ -250,6 +252,59 @@ equalityButton.addEventListener("click", (event) => {
     pressEqualityButton();
 });
 
+//Keyboard Button Event Listeners
+
+addEventListener("keydown", (event) => { 
+    switch(event.key) {
+        case "c":
+            return pressClearButton();
+        case "Escape":
+            return pressClearButton();
+        case "Backspace":
+            return pressDeleteButton();
+        case "%":
+            return pressOperatorButton(" % ");
+        case "/":
+            return pressOperatorButton(" / ");
+        case "7":
+            return pressNumberButton("7");
+        case "8":
+            return pressNumberButton("8");
+        case "9":
+            return pressNumberButton("9");
+        case "*":
+            return pressOperatorButton(" * ");
+        case "4":
+            return pressNumberButton("4");
+        case "5":
+            return pressNumberButton("5");
+        case "6":
+            return pressNumberButton("6");
+        case "+":
+            return pressOperatorButton(" + ");
+        case "1":
+            return pressNumberButton("1");
+        case "2":
+            return pressNumberButton("2");
+        case "3":
+            return pressNumberButton("3");
+        case "-":
+            return pressOperatorButton(" - ");
+        case "n":
+            return pressNegativeButton();
+        case "0":
+            return pressZeroButton();
+        case ".":
+            return pressDecimalButton();
+        case "=":
+            return pressEqualityButton();
+        case "Enter":
+            return pressEqualityButton();
+    }
+    
+});
+
+
 // Keep 0 when user inputs an operator - DONE
 // Make default screen 0 - DONE
 // add modulus button functionality - DONE
@@ -259,9 +314,10 @@ equalityButton.addEventListener("click", (event) => {
 // add negative button functionality - DONE
 // Restrict user to only input one 0 at the beginning of each number - DONE
 // fix bug: can use multiple decimals in a number - DONE
+// Change favicon to be red, orange, gray, green or some other combination that includes the orange color - DONE
+// fix bug: negative button breaks second number - DONE
+// fix bug: decimals not tracking, everything always gets rounded down for some reason except with division for some reason - DONE
+// fix bug: negative button doesn't work on 0 with decimals (this is because of the decimal rounding bug) - DONE
+// Allow user to use keyboard for inputs - DONE
 
-// fix bug: decimals not tracking, everything always gets rounded down for some reason except with division for some reason
-// fix bug: negative button breaks second number
-// replace solution with number if number button pressed after equality button pressed
-// Change favicon to be red, orange, gray, green or some other combination that includes the orange color
-// Allow user to use keyboard for inputs
+// replace solution with number if number button pressed after equality button pressed - this feature is a bit complex for the scope of this project, I might leave it out
