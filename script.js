@@ -76,7 +76,7 @@ function updateData(button, operation) {
     lastButton = button;
     lastOperation = operation;
     equation = displayBox.textContent.split(" ");
-}
+};
 
 // Button Functions
 
@@ -100,7 +100,7 @@ function pressDeleteButton() {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1);
         updateData("delete", undefined);
     }
-}
+};
 
 function pressNumberButton(num) {
     if (displayBox.textContent.length >= 15) {
@@ -122,7 +122,7 @@ function pressOperatorButton(operator) {
     if (displayBox.textContent.length >= 15 || displayBox.textContent.slice(-1) === " " || equation[equation.length - 1] === "Err") {
         return;
     } else if (equation.length === 3) {
-        solveEquation();
+        solveEquation(equation[0], equation[1], equation[2]);
         updateData(operator, equation[1] + equation[2]);
         displayBox.textContent += operator;
     } else {
@@ -151,7 +151,7 @@ function pressZeroButton() {
         displayBox.textContent += "0";
         updateData("0", undefined);
     }
-}
+};
 
 function pressDecimalButton() {
         if (displayBox.textContent.length >= 15 || equation[equation.length - 1].includes(".") === true) {
