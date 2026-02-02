@@ -2,9 +2,9 @@
 
 const displayBox = document.querySelector("#display-box");
 const clearButton = document.querySelector("#clear-button");
+const deleteButton = document.querySelector("#delete-button");
 const modulusButton = document.querySelector("#modulus-button");
 const divisionButton = document.querySelector("#division-button");
-const deleteButton = document.querySelector("#delete-button");
 const sevenButton = document.querySelector("#seven-button");
 const eightButton = document.querySelector("#eight-button");
 const nineButton = document.querySelector("#nine-button");
@@ -21,8 +21,11 @@ const negativeButton = document.querySelector("#negative-button");
 const zeroButton = document.querySelector("#zero-button");
 const decimalButton = document.querySelector("#decimal-button");
 const equalityButton = document.querySelector("#equality-button");
+const helpButton = document.querySelector("#help-button");
 
 let equation = displayBox.textContent.split(" ");
+let lastButton;
+let lastOperation;
 
 // Calculator Functions
 
@@ -51,11 +54,10 @@ function operate(num1, operator, num2) {
     }
 };
 
-function solveEquation() {
-    equation = displayBox.textContent.split(" ", 3);
-    const num1 = parseFloat(equation[0]);
-    const num2 = parseFloat(equation[2]);
-    const solution = operate(num1, equation[1], num2);
+function solveEquation(num1, operation, num2) {
+    num1 = parseFloat(num1);
+    num2 = parseFloat(num2);
+    const solution = operate(num1, operation, num2);
     if (solution !== solution) {
         displayBox.textContent = "Err"
     } else if (solution.toString().includes(".") === true){
@@ -70,43 +72,49 @@ function solveEquation() {
     }
 };
 
-function updateEquationData() {
+function updateData(button, operation) {
+    lastButton = button;
+    lastOperation = operation;
     equation = displayBox.textContent.split(" ");
-};
+}
 
 // Button Functions
 
 function pressClearButton() {
+    if (displayBox.textContent === "0") {
+        return;
+    } else {
     displayBox.textContent = "0";
-    updateEquationData();
+    updateData("clear", undefined);
+    }
 };
 
 function pressDeleteButton() {
     if (equation.length === 1 && equation[0].length === 1 || equation[equation.length - 1] === "Err") {
         displayBox.textContent = "0";
-        updateEquationData();
+        updateData("delete", undefined);
     } else if (equation[equation.length - 1] === "") {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1).trim();
-        updateEquationData();
+        updateData("delete", undefined);
     } else {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1);
-        updateEquationData();
+        updateData("delete", undefined);
     }
 }
 
 function pressNumberButton(num) {
     if (displayBox.textContent.length >= 15) {
         return;
-    } else if (equation[equation.length - 1] === "Err") {
+    } else if (equation[equation.length - 1] === "Err" || lastButton === " = ") {
         displayBox.textContent = num;
-        updateEquationData();
+        updateData(num, undefined);
     } else if (equation[equation.length - 1] === "0") {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1);
         displayBox.textContent += num;
-        updateEquationData();
+        updateData(num, undefined);
     } else {
         displayBox.textContent += num;
-        updateEquationData();
+        updateData(num, undefined);
     }
 };
 
@@ -115,11 +123,11 @@ function pressOperatorButton(operator) {
         return;
     } else if (equation.length === 3) {
         solveEquation();
+        updateData(operator, equation[1] + equation[2]);
         displayBox.textContent += operator;
-        updateEquationData();
     } else {
         displayBox.textContent += operator;
-        updateEquationData();
+        updateData(operator, undefined);
     }
 };
 
@@ -129,19 +137,19 @@ function pressNegativeButton() {
     } else {
         equation[equation.length - 1] = String(equation[equation.length - 1] * -1);
         displayBox.textContent = equation.join(" ");
-        updateEquationData();
+        updateData("negative", undefined);
     }
 };
 
 function pressZeroButton() {
     if (displayBox.textContent.length >= 15 || (equation[equation.length - 1] === "0")) {
         return;
-    } else if (equation[equation.length - 1] === "Err") {
+    } else if (equation[equation.length - 1] === "Err" || lastButton === " = ") {
         displayBox.textContent = "0";
-        updateEquationData();
+        updateData("0", undefined);
     } else {
         displayBox.textContent += "0";
-        updateEquationData();
+        updateData("0", undefined);
     }
 }
 
@@ -150,22 +158,25 @@ function pressDecimalButton() {
         return;
     } else if (equation[equation.length - 1] === "Err") {
         displayBox.textContent = "0.";
-        updateEquationData();
+        updateData(".", undefined);
     } else if (displayBox.textContent.slice(-1) === " ") {
         displayBox.textContent += "0.";
-        updateEquationData();
+        updateData(".", undefined);
     } else {
         displayBox.textContent += ".";
-        updateEquationData();
+        updateData(".", undefined);
     }
 };
 
 function pressEqualityButton() {
-    if (equation[2] !== "" && equation[2] !== undefined) {
-        solveEquation();
-        updateEquationData();
-    } else {
+    if (equation[equation.length - 1] === "Err") {
         return;
+    } else if (lastButton === " = " && lastOperation !== undefined) {
+        solveEquation(equation[0], lastOperation.split(" ")[0], lastOperation.split(" ")[1]);
+        updateData(" = ", lastOperation);
+    } else if (equation[2] !== "" && equation[2] !== undefined) {
+        solveEquation(equation[0], equation[1], equation[2]);
+        updateData(" = ", `${equation[1]} ${equation[2]}`);
     }
 };
 
@@ -228,7 +239,6 @@ twoButton.addEventListener("click", (event) => {
 });
 
 threeButton.addEventListener("click", (event) => {
-    lastButton = "3";
     pressNumberButton("3");
 });
 
@@ -252,6 +262,10 @@ equalityButton.addEventListener("click", (event) => {
     pressEqualityButton();
 });
 
+helpButton.addEventListener("click", (event) => {
+    alert("Keyboard Shortcuts:\n\nClear Button: C or Esc\nDelete Button: Backspace or Delete\nOperators: % \ * + -\nNumbers: 0-9\nNegative: N\nDecimal: .\nEquality: = or Enter");
+});
+
 //Keyboard Button Event Listeners
 
 addEventListener("keydown", (event) => { 
@@ -261,6 +275,8 @@ addEventListener("keydown", (event) => {
         case "Escape":
             return pressClearButton();
         case "Backspace":
+            return pressDeleteButton();
+        case "Delete":
             return pressDeleteButton();
         case "%":
             return pressOperatorButton(" % ");
@@ -301,23 +317,4 @@ addEventListener("keydown", (event) => {
         case "Enter":
             return pressEqualityButton();
     }
-    
 });
-
-
-// Keep 0 when user inputs an operator - DONE
-// Make default screen 0 - DONE
-// add modulus button functionality - DONE
-// add error message for divide by zero - DONE
-// clear error message when user inputs with a button - DONE
-// Replace 0 when user inputs a number - DONE
-// add negative button functionality - DONE
-// Restrict user to only input one 0 at the beginning of each number - DONE
-// fix bug: can use multiple decimals in a number - DONE
-// Change favicon to be red, orange, gray, green or some other combination that includes the orange color - DONE
-// fix bug: negative button breaks second number - DONE
-// fix bug: decimals not tracking, everything always gets rounded down for some reason except with division for some reason - DONE
-// fix bug: negative button doesn't work on 0 with decimals (this is because of the decimal rounding bug) - DONE
-// Allow user to use keyboard for inputs - DONE
-
-// replace solution with number if number button pressed after equality button pressed - this feature is a bit complex for the scope of this project, I might leave it out

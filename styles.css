@@ -261,6 +261,18 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--equality-active-button-color);
 }
 
+#help-button {
+    height: fit-content;
+    width: fit-content;
+    background-color: var(--number-button-color);
+    margin-left: 5%;
+    padding: 1% 2%;
+}
+
+#help-button:active {
+    background-color: var(--number-active-button-color);
+}
+
 /* Media queries for screen widths */
 
 @media (max-width: 2400px) {
