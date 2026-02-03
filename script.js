@@ -58,7 +58,7 @@ function solveEquation(num1, operation, num2) {
     num1 = parseFloat(num1);
     num2 = parseFloat(num2);
     const solution = operate(num1, operation, num2);
-    if (solution !== solution) {
+    if (solution !== solution || solution === Infinity) {
         displayBox.textContent = "Err"
     } else if (solution.toString().includes(".") === true){
         const solutionArray = solution.toString().split(".")
@@ -78,10 +78,33 @@ function updateData(button, operation) {
     equation = displayBox.textContent.split(" ");
 };
 
+// Lengthy Check Functions
+
+const isLastItem = (item) => equation[equation.length - 1] === item;
+
+function isDisplayUnacceptable (button) {
+    switch(button) {
+        case "clear":
+            return displayBox.textContent === "0";
+        case "delete":
+            return equation.length === 1 && equation[0].length === 1 && equation[0] === "0";
+        case "operator":
+            return displayBox.textContent.length >= 15 || isLastItem("Err");
+        case "number":
+            return displayBox.textContent.length >= 15;
+        case "negative":
+            return displayBox.textContent.length >= 15 || isLastItem("") || isLastItem("Err") || parseFloat(equation[equation.length - 1]) === 0;
+        case "zero":
+            return displayBox.textContent.length >= 15 || isLastItem("0");
+        case "decimal":
+            return displayBox.textContent.length >= 15 || equation[equation.length - 1].includes(".") === true;
+    }
+};
+
 // Button Functions
 
 function pressClearButton() {
-    if (displayBox.textContent === "0") {
+    if (isDisplayUnacceptable("clear")) {
         return;
     } else {
     displayBox.textContent = "0";
@@ -90,10 +113,12 @@ function pressClearButton() {
 };
 
 function pressDeleteButton() {
-    if (equation.length === 1 && equation[0].length === 1 || equation[equation.length - 1] === "Err") {
+    if (isDisplayUnacceptable("delete")) {
+        return;
+    }else if (equation.length === 1 && equation[0].length === 1 || isLastItem("Err")) {
         displayBox.textContent = "0";
         updateData("delete", undefined);
-    } else if (equation[equation.length - 1] === "") {
+    } else if (isLastItem("")) {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1).trim();
         updateData("delete", undefined);
     } else {
@@ -102,25 +127,17 @@ function pressDeleteButton() {
     }
 };
 
-function pressNumberButton(num) {
-    if (displayBox.textContent.length >= 15) {
-        return;
-    } else if (equation[equation.length - 1] === "Err" || lastButton === " = ") {
-        displayBox.textContent = num;
-        updateData(num, undefined);
-    } else if (equation[equation.length - 1] === "0") {
-        displayBox.textContent = displayBox.textContent.trim().slice(0,-1);
-        displayBox.textContent += num;
-        updateData(num, undefined);
-    } else {
-        displayBox.textContent += num;
-        updateData(num, undefined);
-    }
-};
-
 function pressOperatorButton(operator) {
-    if (displayBox.textContent.length >= 15 || displayBox.textContent.slice(-1) === " " || equation[equation.length - 1] === "Err") {
+    if (isDisplayUnacceptable("operator")) {
         return;
+    } else if (displayBox.textContent.slice(-1) === " ") {
+        displayBox.textContent = displayBox.textContent.trim().slice(0,-1).trim();
+        displayBox.textContent += operator;
+        updateData(operator, undefined);
+    } else if (displayBox.textContent.slice(-1) === "e") {
+        displayBox.textContent += "0";
+        displayBox.textContent += operator;
+        updateData(operator, undefined);
     } else if (equation.length === 3) {
         solveEquation(equation[0], equation[1], equation[2]);
         updateData(operator, equation[1] + equation[2]);
@@ -131,8 +148,24 @@ function pressOperatorButton(operator) {
     }
 };
 
+function pressNumberButton(num) {
+    if (isDisplayUnacceptable("number")) {
+        return;
+    } else if (isLastItem("Err") || lastButton === " = ") {
+        displayBox.textContent = num;
+        updateData(num, undefined);
+    } else if (isLastItem("0")) {
+        displayBox.textContent = displayBox.textContent.trim().slice(0,-1);
+        displayBox.textContent += num;
+        updateData(num, undefined);
+    } else {
+        displayBox.textContent += num;
+        updateData(num, undefined);
+    }
+};
+
 function pressNegativeButton() {
-    if (displayBox.textContent.length >= 15 || equation[equation.length - 1] === "" || equation[equation.length - 1] === "Err" || parseFloat(equation[equation.length - 1]) === 0) {
+    if (isDisplayUnacceptable("negative")) {
         return;
     } else {
         equation[equation.length - 1] = String(equation[equation.length - 1] * -1);
@@ -142,9 +175,9 @@ function pressNegativeButton() {
 };
 
 function pressZeroButton() {
-    if (displayBox.textContent.length >= 15 || (equation[equation.length - 1] === "0")) {
+    if (isDisplayUnacceptable("zero")) {
         return;
-    } else if (equation[equation.length - 1] === "Err" || lastButton === " = ") {
+    } else if (isLastItem("Err") || lastButton === " = ") {
         displayBox.textContent = "0";
         updateData("0", undefined);
     } else {
@@ -154,9 +187,9 @@ function pressZeroButton() {
 };
 
 function pressDecimalButton() {
-        if (displayBox.textContent.length >= 15 || equation[equation.length - 1].includes(".") === true) {
+        if (isDisplayUnacceptable("decimal")) {
         return;
-    } else if (equation[equation.length - 1] === "Err") {
+    } else if (isLastItem("Err")) {
         displayBox.textContent = "0.";
         updateData(".", undefined);
     } else if (displayBox.textContent.slice(-1) === " ") {
@@ -169,7 +202,7 @@ function pressDecimalButton() {
 };
 
 function pressEqualityButton() {
-    if (equation[equation.length - 1] === "Err") {
+    if (isLastItem("Err")) {
         return;
     } else if (lastButton === " = " && lastOperation !== undefined) {
         solveEquation(equation[0], lastOperation.split(" ")[0], lastOperation.split(" ")[1]);
@@ -318,3 +351,6 @@ addEventListener("keydown", (event) => {
             return pressEqualityButton();
     }
 });
+
+// how to node list for dom elements and event listeners?
+// functions for lengthy if checks
