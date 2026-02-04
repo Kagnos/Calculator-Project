@@ -7,7 +7,7 @@ let equation = displayBox.textContent.split(" ");
 let lastButton;
 let lastOperation;
 
-const historyMessage = [];
+const memoryMessage = [];
 
 // Calculator Functions
 
@@ -125,7 +125,7 @@ function pressOperatorButton(operator) {
         displayBox.textContent += operator;
         updateData(operator, undefined);
     } else if (equation.length === 3) {
-        historyMessage.push(equation.join(" "));
+        memoryMessage.push(equation.join(" "));
         solveEquation(equation[0], equation[1], equation[2]);
         updateData(operator, equation[1] + equation[2]);
         displayBox.textContent += operator;
@@ -192,11 +192,11 @@ function pressEqualityButton() {
     if (isLastItem("Err")) {
         return;
     } else if (lastButton === " = " && lastOperation !== undefined) {
-        historyMessage.push(equation.join(" "));
+        memoryMessage.push(equation.join(" "));
         solveEquation(equation[0], lastOperation.split(" ")[0], lastOperation.split(" ")[1]);
         updateData(" = ", lastOperation);
     } else if (secondNumberExists()) {
-        historyMessage.push(equation.join(" "));
+        memoryMessage.push(equation.join(" "));
         solveEquation(equation[0], equation[1], equation[2]);
         updateData(" = ", `${equation[1]} ${equation[2]}`);
     }
@@ -204,12 +204,14 @@ function pressEqualityButton() {
 
 const pressHelpButton = () => alert("Keyboard Shortcuts:\n\nClear Button: C or Esc\nDelete Button: Backspace or Delete\nOperators: % \ * + -\nNumbers: 0-9\nNegative: N\nDecimal: .\nEquality: = or Enter\n\nPossible Error Reasons:\n\nResult is too large and equates to infinity\nResult has too many characters for display (>15)\nNumber is divided by 0 and returns NaN or infinity");
 
-function pressHistoryButton () {
-    if (historyMessage.length > 10) {
-        historyMessage.shift()
-        alert(historyMessage.join("\n"));
+function pressMemoryButton () {
+    if (memoryMessage.length === 0) {
+        alert("No Memory Yet...");
+    } else if (memoryMessage.length > 10) {
+        memoryMessage.shift()
+        alert(`Memory:\n\n${memoryMessage.join("\n")}\n\nRefresh page to clear`);
     } else {
-        alert(historyMessage.join("\n"));
+        alert(`Memory:\n\n${memoryMessage.join("\n")}\n\nRefresh page to clear`);
     }
 };
 
@@ -260,8 +262,8 @@ allButtons.forEach((button) => {
                 return pressEqualityButton();
             case "help-button":
                 return pressHelpButton();
-            case "history-button":
-                return pressHistoryButton();
+            case "memory-button":
+                return pressMemoryButton();
         }
     })
 });
@@ -316,6 +318,3 @@ addEventListener("keydown", (event) => {
             return pressEqualityButton();
     }
 });
-
-// fix bug: negative results with large decimals (>3) give an error, it's not a problem with operate() itself
-// add solutions to equation history
