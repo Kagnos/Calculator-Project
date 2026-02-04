@@ -265,11 +265,23 @@ h1, h2, h3, h4, h5, h6 {
     height: fit-content;
     width: fit-content;
     background-color: var(--number-button-color);
-    margin-left: 5%;
-    padding: 1% 2%;
+    margin: 5%;
+    padding: 2% 3%;
 }
 
 #help-button:active {
+    background-color: var(--number-active-button-color);
+}
+
+#memory-button {
+    height: fit-content;
+    width: fit-content;
+    background-color: var(--number-button-color);
+    margin: 5%;
+    padding: 2% 3%;
+}
+
+#memory-button:active {
     background-color: var(--number-active-button-color);
 }
 

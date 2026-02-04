@@ -4,9 +4,9 @@ const displayBox = document.querySelector("#display-box");
 const allButtons = document.querySelectorAll(".button");
 
 let equation = displayBox.textContent.split(" ");
+let solution;
 let lastButton;
 let lastOperation;
-
 const memoryMessage = [];
 
 // Calculator Functions
@@ -39,18 +39,24 @@ function operate(num1, operator, num2) {
 function solveEquation(num1, operation, num2) {
     num1 = parseFloat(num1);
     num2 = parseFloat(num2);
-    const solution = operate(num1, operation, num2);
-    if (solution !== solution || solution === Infinity || String(solution).length > 15) {
-        displayBox.textContent = "Err"
-    } else if (solution.toString().includes(".") === true){
+    solution = operate(num1, operation, num2);
+    if (isSolutionAnError(solution)) {
+        solution = "Err";
+        displayBox.textContent = solution;
+        memoryMessage.push(`${equation.join(" ")} = ${solution}`);
+    } else if (doesSolutionIncludesDecimal()){
         const solutionArray = solution.toString().split(".")
         if (solutionArray[1].length > 3) {
-            displayBox.textContent = solution.toFixed(3);
+            solution = solution.toFixed(3);
+            displayBox.textContent = solution;
+            memoryMessage.push(`${equation.join(" ")} = ${solution}`);
         } else {
             displayBox.textContent = solution;
+            memoryMessage.push(`${equation.join(" ")} = ${solution}`);
         }
     } else {
         displayBox.textContent = solution;
+        memoryMessage.push(`${equation.join(" ")} = ${solution}`);
     }
 };
 
@@ -60,13 +66,17 @@ function updateData(button, operation) {
     equation = displayBox.textContent.split(" ");
 };
 
-// Lengthy Check Functions
+// If Check Functions
+
+const isSolutionAnError = () => solution !== solution || solution === Infinity || String(solution).length > 15;
+
+const doesSolutionIncludesDecimal = () => solution.toString().includes(".") === true;
 
 const isLastItem = (item) => equation[equation.length - 1] === item;
 
 const isLastCharacter = (character) => displayBox.textContent.slice(-1) === character;
 
-const secondNumberExists = () => equation[2] !== "" && equation[2] !== undefined;
+const doesSecondNumberExist = () => equation[2] !== "" && equation[2] !== undefined;
 
 function isDisplayUnacceptable (button) {
     switch(button) {
@@ -125,7 +135,6 @@ function pressOperatorButton(operator) {
         displayBox.textContent += operator;
         updateData(operator, undefined);
     } else if (equation.length === 3) {
-        memoryMessage.push(equation.join(" "));
         solveEquation(equation[0], equation[1], equation[2]);
         updateData(operator, equation[1] + equation[2]);
         displayBox.textContent += operator;
@@ -192,26 +201,24 @@ function pressEqualityButton() {
     if (isLastItem("Err")) {
         return;
     } else if (lastButton === " = " && lastOperation !== undefined) {
-        memoryMessage.push(equation.join(" "));
         solveEquation(equation[0], lastOperation.split(" ")[0], lastOperation.split(" ")[1]);
         updateData(" = ", lastOperation);
-    } else if (secondNumberExists()) {
-        memoryMessage.push(equation.join(" "));
+    } else if (doesSecondNumberExist()) {
         solveEquation(equation[0], equation[1], equation[2]);
         updateData(" = ", `${equation[1]} ${equation[2]}`);
     }
 };
 
-const pressHelpButton = () => alert("Keyboard Shortcuts:\n\nClear Button: C or Esc\nDelete Button: Backspace or Delete\nOperators: % \ * + -\nNumbers: 0-9\nNegative: N\nDecimal: .\nEquality: = or Enter\n\nPossible Error Reasons:\n\nResult is too large and equates to infinity\nResult has too many characters for display (>15)\nNumber is divided by 0 and returns NaN or infinity");
+const pressHelpButton = () => alert("Memory saves last 10 equations.\nRefresh page to clear memory.\n\nKeyboard Shortcuts:\n\nClear: C or Esc\nDelete: Backspace or Delete\nOperators: % \ * + -\nNumbers: 0-9\nNegative: N\nDecimal: .\nEquality: = or Enter\n\nPossible Error Reasons:\n\nResult is too large and equates to infinity\nResult has too many characters for display (>15)\nNumber is divided by 0 and returns NaN or infinity");
 
 function pressMemoryButton () {
     if (memoryMessage.length === 0) {
-        alert("No Memory Yet...");
+        alert("No memory yet..");
     } else if (memoryMessage.length > 10) {
-        memoryMessage.shift()
-        alert(`Memory:\n\n${memoryMessage.join("\n")}\n\nRefresh page to clear`);
+        memoryMessage.shift();
+        alert(`Memory:\n\n${memoryMessage.join("\n")}`);
     } else {
-        alert(`Memory:\n\n${memoryMessage.join("\n")}\n\nRefresh page to clear`);
+        alert(`Memory:\n\n${memoryMessage.join("\n")}`);
     }
 };
 
