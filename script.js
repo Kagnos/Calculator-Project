@@ -231,10 +231,10 @@ const pressHelpButton = () => alert("Memory saves last 10 equations.\nRefresh pa
 function pressMemoryButton () {
     if (memoryMessage.length === 0) {
         alert("No memory yet..");
-    } else if (memoryMessage.length > 10) {
-        memoryMessage.shift();
-        alert(`Memory:\n\n${memoryMessage.join("\n")}`);
     } else {
+        for (i = memoryMessage.length; i > 10; i--) {
+            memoryMessage.shift();
+        }
         alert(`Memory:\n\n${memoryMessage.join("\n")}`);
     }
 };
