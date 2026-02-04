@@ -40,23 +40,36 @@ function solveEquation(num1, operation, num2) {
     num1 = parseFloat(num1);
     num2 = parseFloat(num2);
     solution = operate(num1, operation, num2);
-    if (isSolutionAnError(solution)) {
-        solution = "Err";
-        displayBox.textContent = solution;
-        memoryMessage.push(`${equation.join(" ")} = ${solution}`);
-    } else if (doesSolutionIncludesDecimal()){
-        const solutionArray = solution.toString().split(".")
-        if (solutionArray[1].length > 3) {
+    if (lastOperation !== undefined) {
+        if (doesSolutionIncludesDecimal()){
+            const solutionArray = solution.toString().split(".");
+            if (solutionArray[1].length > 3) {
             solution = solution.toFixed(3);
+            }
+        }
+        if (isSolutionAnError(solution)) {
+            solution = "Error";
+            displayBox.textContent = solution;
+            memoryMessage.push(`${equation.join(" ")} ${lastOperation} = ${solution}`);
+        } else {
+            displayBox.textContent = solution;
+            memoryMessage.push(`${equation.join(" ")} ${lastOperation} = ${solution}`);
+        }
+    } else if (lastOperation === undefined) {
+        if (doesSolutionIncludesDecimal()){
+            const solutionArray = solution.toString().split(".");
+            if (solutionArray[1].length > 3) {
+            solution = solution.toFixed(3);
+            }
+        }
+        if (isSolutionAnError(solution)) {
+            solution = "Error";
             displayBox.textContent = solution;
             memoryMessage.push(`${equation.join(" ")} = ${solution}`);
         } else {
             displayBox.textContent = solution;
             memoryMessage.push(`${equation.join(" ")} = ${solution}`);
         }
-    } else {
-        displayBox.textContent = solution;
-        memoryMessage.push(`${equation.join(" ")} = ${solution}`);
     }
 };
 
@@ -68,7 +81,7 @@ function updateData(button, operation) {
 
 // If Check Functions
 
-const isSolutionAnError = () => solution !== solution || solution === Infinity || String(solution).length > 15;
+const isSolutionAnError = () => solution !== solution || solution === Infinity || solution === -Infinity || String(solution).length > 15;
 
 const doesSolutionIncludesDecimal = () => solution.toString().includes(".") === true;
 
@@ -85,11 +98,11 @@ function isDisplayUnacceptable (button) {
         case "delete":
             return equation.length === 1 && equation[0].length === 1 && equation[0] === "0";
         case "operator":
-            return displayBox.textContent.length >= 15 || isLastItem("Err");
+            return displayBox.textContent.length >= 15 || isLastItem("Error");
         case "number":
             return displayBox.textContent.length >= 15;
         case "negative":
-            return displayBox.textContent.length >= 15 || isLastItem("") || isLastItem("Err") || parseFloat(equation[equation.length - 1]) === 0;
+            return displayBox.textContent.length >= 15 || isLastItem("") || isLastItem("Error") || parseFloat(equation[equation.length - 1]) === 0;
         case "zero":
             return displayBox.textContent.length >= 15 || isLastItem("0");
         case "decimal":
@@ -111,7 +124,7 @@ function pressClearButton() {
 function pressDeleteButton() {
     if (isDisplayUnacceptable("delete")) {
         return;
-    }else if (equation.length === 1 && equation[0].length === 1 || isLastItem("Err")) {
+    }else if (equation.length === 1 && equation[0].length === 1 || isLastItem("Error")) {
         displayBox.textContent = "0";
         updateData("delete", undefined);
     } else if (isLastItem("")) {
@@ -147,7 +160,7 @@ function pressOperatorButton(operator) {
 function pressNumberButton(num) {
     if (isDisplayUnacceptable("number")) {
         return;
-    } else if (isLastItem("Err") || lastButton === " = ") {
+    } else if (isLastItem("Error") || lastButton === " = ") {
         displayBox.textContent = num;
         updateData(num, undefined);
     } else if (isLastItem("0")) {
@@ -173,7 +186,7 @@ function pressNegativeButton() {
 function pressZeroButton() {
     if (isDisplayUnacceptable("zero")) {
         return;
-    } else if (isLastItem("Err") || lastButton === " = ") {
+    } else if (isLastItem("Error") || lastButton === " = ") {
         displayBox.textContent = "0";
         updateData("0", undefined);
     } else {
@@ -185,7 +198,7 @@ function pressZeroButton() {
 function pressDecimalButton() {
         if (isDisplayUnacceptable("decimal")) {
         return;
-    } else if (isLastItem("Err")) {
+    } else if (isLastItem("Error")) {
         displayBox.textContent = "0.";
         updateData(".", undefined);
     } else if (isLastCharacter(" ")) {
@@ -198,9 +211,9 @@ function pressDecimalButton() {
 };
 
 function pressEqualityButton() {
-    if (isLastItem("Err")) {
+    if (isLastItem("Error")) {
         return;
-    } else if (lastButton === " = " && lastOperation !== undefined) {
+    } else if (lastOperation !== undefined) {
         solveEquation(equation[0], lastOperation.split(" ")[0], lastOperation.split(" ")[1]);
         updateData(" = ", lastOperation);
     } else if (doesSecondNumberExist()) {
