@@ -1,31 +1,13 @@
 // Global Variables
 
 const displayBox = document.querySelector("#display-box");
-const clearButton = document.querySelector("#clear-button");
-const deleteButton = document.querySelector("#delete-button");
-const modulusButton = document.querySelector("#modulus-button");
-const divisionButton = document.querySelector("#division-button");
-const sevenButton = document.querySelector("#seven-button");
-const eightButton = document.querySelector("#eight-button");
-const nineButton = document.querySelector("#nine-button");
-const multiplicationButton = document.querySelector("#multiplication-button");
-const fourButton = document.querySelector("#four-button");
-const fiveButton = document.querySelector("#five-button");
-const sixButton = document.querySelector("#six-button");
-const additionButton = document.querySelector("#addition-button");
-const oneButton = document.querySelector("#one-button");
-const twoButton = document.querySelector("#two-button");
-const threeButton = document.querySelector("#three-button");
-const subtractionButton = document.querySelector("#subtraction-button");
-const negativeButton = document.querySelector("#negative-button");
-const zeroButton = document.querySelector("#zero-button");
-const decimalButton = document.querySelector("#decimal-button");
-const equalityButton = document.querySelector("#equality-button");
-const helpButton = document.querySelector("#help-button");
+const allButtons = document.querySelectorAll(".button");
 
 let equation = displayBox.textContent.split(" ");
 let lastButton;
 let lastOperation;
+
+const historyMessage = [];
 
 // Calculator Functions
 
@@ -58,7 +40,7 @@ function solveEquation(num1, operation, num2) {
     num1 = parseFloat(num1);
     num2 = parseFloat(num2);
     const solution = operate(num1, operation, num2);
-    if (solution !== solution || solution === Infinity) {
+    if (solution !== solution || solution === Infinity || String(solution).length > 15) {
         displayBox.textContent = "Err"
     } else if (solution.toString().includes(".") === true){
         const solutionArray = solution.toString().split(".")
@@ -81,6 +63,10 @@ function updateData(button, operation) {
 // Lengthy Check Functions
 
 const isLastItem = (item) => equation[equation.length - 1] === item;
+
+const isLastCharacter = (character) => displayBox.textContent.slice(-1) === character;
+
+const secondNumberExists = () => equation[2] !== "" && equation[2] !== undefined;
 
 function isDisplayUnacceptable (button) {
     switch(button) {
@@ -130,15 +116,16 @@ function pressDeleteButton() {
 function pressOperatorButton(operator) {
     if (isDisplayUnacceptable("operator")) {
         return;
-    } else if (displayBox.textContent.slice(-1) === " ") {
+    } else if (isLastCharacter(" ")) {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1).trim();
         displayBox.textContent += operator;
         updateData(operator, undefined);
-    } else if (displayBox.textContent.slice(-1) === "e") {
+    } else if (isLastCharacter("e")) {
         displayBox.textContent += "0";
         displayBox.textContent += operator;
         updateData(operator, undefined);
     } else if (equation.length === 3) {
+        historyMessage.push(equation.join(" "));
         solveEquation(equation[0], equation[1], equation[2]);
         updateData(operator, equation[1] + equation[2]);
         displayBox.textContent += operator;
@@ -192,7 +179,7 @@ function pressDecimalButton() {
     } else if (isLastItem("Err")) {
         displayBox.textContent = "0.";
         updateData(".", undefined);
-    } else if (displayBox.textContent.slice(-1) === " ") {
+    } else if (isLastCharacter(" ")) {
         displayBox.textContent += "0.";
         updateData(".", undefined);
     } else {
@@ -205,101 +192,79 @@ function pressEqualityButton() {
     if (isLastItem("Err")) {
         return;
     } else if (lastButton === " = " && lastOperation !== undefined) {
+        historyMessage.push(equation.join(" "));
         solveEquation(equation[0], lastOperation.split(" ")[0], lastOperation.split(" ")[1]);
         updateData(" = ", lastOperation);
-    } else if (equation[2] !== "" && equation[2] !== undefined) {
+    } else if (secondNumberExists()) {
+        historyMessage.push(equation.join(" "));
         solveEquation(equation[0], equation[1], equation[2]);
         updateData(" = ", `${equation[1]} ${equation[2]}`);
     }
 };
 
+const pressHelpButton = () => alert("Keyboard Shortcuts:\n\nClear Button: C or Esc\nDelete Button: Backspace or Delete\nOperators: % \ * + -\nNumbers: 0-9\nNegative: N\nDecimal: .\nEquality: = or Enter\n\nPossible Error Reasons:\n\nResult is too large and equates to infinity\nResult has too many characters for display (>15)\nNumber is divided by 0 and returns NaN or infinity");
+
+function pressHistoryButton () {
+    if (historyMessage.length > 10) {
+        historyMessage.shift()
+        alert(historyMessage.join("\n"));
+    } else {
+        alert(historyMessage.join("\n"));
+    }
+};
+
 // Button Event Listeners
 
-clearButton.addEventListener("click", (event) => {
-    pressClearButton();
+allButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        switch(button.id) {
+            case "clear-button":
+                return pressClearButton();
+            case "delete-button":
+                return pressDeleteButton();
+            case "modulus-button":
+                return pressOperatorButton(" % ");
+            case "division-button":
+                return pressOperatorButton(" / ");
+            case "seven-button":
+                return pressNumberButton("7");
+            case "eight-button":
+                return pressNumberButton("8");
+            case "nine-button":
+                return pressNumberButton("9");
+            case "multiplication-button":
+                return pressOperatorButton(" * ");
+            case "four-button":
+                return pressNumberButton("4");
+            case "five-button":
+                return pressNumberButton("5");
+            case "six-button":
+                return pressNumberButton("6");
+            case "addition-button":
+                return pressOperatorButton(" + ");
+            case "one-button":
+                return pressNumberButton("1");
+            case "two-button":
+                return pressNumberButton("2");
+            case "three-button":
+                return pressNumberButton("3");
+            case "subtraction-button":
+                return pressOperatorButton(" - ");
+            case "negative-button":
+                return pressNegativeButton();
+            case "zero-button":
+                return pressZeroButton();
+            case "decimal-button":
+                return pressDecimalButton();
+            case "equality-button":
+                return pressEqualityButton();
+            case "help-button":
+                return pressHelpButton();
+            case "history-button":
+                return pressHistoryButton();
+        }
+    })
 });
-
-deleteButton.addEventListener("click", (event) => {
-    pressDeleteButton();
-});
-
-modulusButton.addEventListener("click", (event) => {
-    pressOperatorButton(" % ");
-});
-
-divisionButton.addEventListener("click", (event) => {
-    pressOperatorButton(" / ");
-});
-
-sevenButton.addEventListener("click", (event) => {
-    pressNumberButton("7");
-});
-
-eightButton.addEventListener("click", (event) => {
-    pressNumberButton("8");
-});
-
-nineButton.addEventListener("click", (event) => {
-    pressNumberButton("9");
-});
-
-multiplicationButton.addEventListener("click", (event) => {
-    pressOperatorButton(" * ");
-});
-
-fourButton.addEventListener("click", (event) => {
-    pressNumberButton("4");
-});
-
-fiveButton.addEventListener("click", (event) => {
-    pressNumberButton("5");
-});
-
-sixButton.addEventListener("click", (event) => {
-    pressNumberButton("6");
-});
-
-additionButton.addEventListener("click", (event) => {
-    pressOperatorButton(" + ");
-});
-
-oneButton.addEventListener("click", (event) => {
-    pressNumberButton("1");
-});
-
-twoButton.addEventListener("click", (event) => {
-    pressNumberButton("2");
-});
-
-threeButton.addEventListener("click", (event) => {
-    pressNumberButton("3");
-});
-
-subtractionButton.addEventListener("click", (event) => {
-    pressOperatorButton(" - ");
-});
-
-negativeButton.addEventListener("click", (event) => {
-    pressNegativeButton();
-});
-
-zeroButton.addEventListener("click", (event) => {
-    pressZeroButton();
-});
-
-decimalButton.addEventListener("click", (event) => {  
-    pressDecimalButton();
-});
-
-equalityButton.addEventListener("click", (event) => {
-    pressEqualityButton();
-});
-
-helpButton.addEventListener("click", (event) => {
-    alert("Keyboard Shortcuts:\n\nClear Button: C or Esc\nDelete Button: Backspace or Delete\nOperators: % \ * + -\nNumbers: 0-9\nNegative: N\nDecimal: .\nEquality: = or Enter");
-});
-
-//Keyboard Button Event Listeners
 
 addEventListener("keydown", (event) => { 
     switch(event.key) {
@@ -352,5 +317,5 @@ addEventListener("keydown", (event) => {
     }
 });
 
-// how to node list for dom elements and event listeners?
-// functions for lengthy if checks
+// fix bug: negative results with large decimals (>3) give an error, it's not a problem with operate() itself
+// add solutions to equation history

@@ -11,7 +11,7 @@ I'm really proud of this calculator project. This is my most advanced JavaScript
 * Writing git messages and reflections
 * How to work around bugs and unexpected behaviors
 * How to work with and implement feedback from others
-* So much JavaScript: functions, event listeners, methods, arrays, if else statement checks, switch case statements, global and local variables, and saving variable references for data.
+* So much JavaScript: functions, event listeners, nodelists, methods, arrays, if else statement checks, switch statements, global and local variables, and saving variable references for data.
 
 I achieved everything I set out to do with this project, which is why I'm so proud of it. It works just as I imagined in my head and the logic makes sense. The only part that feels a bit clunky is the way I decided to deal with a character limit. There's probably a better way to code it, but I don't think my 15 character hard limit is a bad solution.
 
