@@ -98,7 +98,7 @@ function isDisplayUnacceptable (button) {
         case "delete":
             return equation.length === 1 && equation[0].length === 1 && equation[0] === "0";
         case "operator":
-            return displayBox.textContent.length >= 15 || isLastItem("Error");
+            return displayBox.textContent.length >= 15;
         case "number":
             return displayBox.textContent.length >= 15;
         case "negative":
@@ -139,6 +139,10 @@ function pressDeleteButton() {
 function pressOperatorButton(operator) {
     if (isDisplayUnacceptable("operator")) {
         return;
+    } else if (isLastItem("Error")) {
+        displayBox.textContent = "0";
+        displayBox.textContent += operator;
+        updateData(operator, undefined);
     } else if (isLastCharacter(" ")) {
         displayBox.textContent = displayBox.textContent.trim().slice(0,-1).trim();
         displayBox.textContent += operator;
