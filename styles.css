@@ -161,9 +161,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #delete-svg {
-    height: auto;
+    display: block;
+    margin: auto;
+    height: 40px;
     width: 40px;
-    margin: 10% 0 0 35%;
+    margin-top: 10%;
 }
 
 #modulus-button {
@@ -332,6 +334,10 @@ h1, h2, h3, h4, h5, h6 {
     #calculator-container {
         width: 90vw;
     }
+    
+    #delete-svg {
+        margin-top: 15%;
+    }
 
 }
 
@@ -341,7 +347,15 @@ h1, h2, h3, h4, h5, h6 {
         width: 98vw;
     }
 
-}
+    #help-button {
+        display: none;
+    }
+
+    #memory-button {
+        display: none;
+    }
+
+    }
 
 @media (max-width: 300px) {
 
@@ -389,6 +403,14 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-height: 600px) {
 
     #calculator-container {
+        display: none;
+    }
+
+    #help-button {
+        display: none;
+    }
+
+    #memory-button {
         display: none;
     }
 

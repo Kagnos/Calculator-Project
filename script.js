@@ -226,7 +226,7 @@ function pressEqualityButton() {
     }
 };
 
-const pressHelpButton = () => alert("Memory saves last 10 equations.\nRefresh page to clear memory.\n\nKeyboard Shortcuts:\n\nClear: C or Esc\nDelete: Backspace or Delete\nOperators: % \ * + -\nNumbers: 0-9\nNegative: N\nDecimal: .\nEquality: = or Enter\n\nPossible Error Reasons:\n\nResult is too large and equates to infinity\nResult has too many characters for display (>15)\nNumber is divided by 0 and returns NaN or infinity");
+const pressHelpButton = () => alert("Memory saves last 10 equations.\nRefresh page to clear memory.\n\nKeyboard Shortcuts:\n\nClear: C or Esc\nDelete: Backspace or Delete\nOperators: % \ * + -\nNumbers: 0-9\nNegative: N\nDecimal: .\nEquality: = or Enter\nHelp: H\nMemory: M\n\nPossible Error Reasons:\n\nResult is too large and equates to infinity\nResult has too many characters for display (>15)\nNumber is divided by 0 and returns NaN or infinity");
 
 function pressMemoryButton () {
     if (memoryMessage.length === 0) {
@@ -340,5 +340,9 @@ addEventListener("keydown", (event) => {
             return pressEqualityButton();
         case "Enter":
             return pressEqualityButton();
+        case "h":
+            return pressHelpButton();
+        case "m":
+            return pressMemoryButton();
     }
 });
